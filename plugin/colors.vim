@@ -267,7 +267,7 @@ let s:Formatters = {
 
 function! s:ConvertColor(str, format) abort
 	let l:data = s:NormalizeString(a:str)
-	if type(l:data) == type(v:none)
+	if type(l:data) == type(v:null)
 		echom 'No valid color to convert'
 		return v:null
 	endif
@@ -329,7 +329,7 @@ function! ConvertColorTo(...) range abort
 	" evaluate to the expression register
 	if len(a:000) == 2
 		let l:converted_data = s:ConvertColor(a:000['1'], l:type)
-		if type(l:converted_data) == type(v:none)
+		if type(l:converted_data) == type(v:null)
 			" No error message because it should've already been displayed earlier
 			return
 		endif
@@ -339,7 +339,7 @@ function! ConvertColorTo(...) range abort
 
 	let l:selection_data = s:GetContentSelection(a:firstline, a:lastline)
 	let l:converted_data = s:ConvertColor(l:selection_data.selected_text, l:type)
-	if type(l:converted_data) == type(v:none)
+	if type(l:converted_data) == type(v:null)
 		" No error message because it should've already been displayed earlier
 		return
 	endif
