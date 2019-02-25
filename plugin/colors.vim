@@ -137,21 +137,21 @@ endfunction
 function! s:NormalizeString(str) abort
 	" Is it a valid hex[a]?
 	let l:match = s:ParseString(a:str, s:hex_regex, s:normalize_hex_digits)
-	if type(l:match) == v:t_dict
+	if type(l:match) == type({})
 		let l:match['type'] = 'hex'
 		return l:match
 	endif
 
 	" Is it a valid rgb[a]?
 	let l:match = s:ParseString(a:str, s:rgb_regex, function('s:NormalizeDigits'))
-	if type(l:match) == v:t_dict
+	if type(l:match) == type({})
 		let l:match['type'] = 'rgb'
 		return l:match
 	endif
 
 	" Is it a valid hsl[a]?
 	let l:match = s:ParseString(a:str, s:hsl_regex, function('s:NormalizeHSLDigits'))
-	if type(l:match) == v:t_dict
+	if type(l:match) == type({})
 		let l:match['type'] = 'hsl'
 		" Convert hsla decimals into rgba decimals
 		let l:match['normalized_data'] = s:HSLToRGB(l:match['normalized_data'])
@@ -267,7 +267,7 @@ let s:Formatters = {
 
 function! s:ConvertColor(str, format) abort
 	let l:data = s:NormalizeString(a:str)
-	if type(l:data) == v:t_none
+	if type(l:data) == type(v:null)
 		echom 'No valid color to convert'
 		return v:null
 	endif
@@ -329,7 +329,7 @@ function! ConvertColorTo(...) range abort
 	" evaluate to the expression register
 	if len(a:000) == 2
 		let l:converted_data = s:ConvertColor(a:000['1'], l:type)
-		if type(l:converted_data) == v:t_none
+		if type(l:converted_data) == type(v:null)
 			" No error message because it should've already been displayed earlier
 			return
 		endif
@@ -339,7 +339,7 @@ function! ConvertColorTo(...) range abort
 
 	let l:selection_data = s:GetContentSelection(a:firstline, a:lastline)
 	let l:converted_data = s:ConvertColor(l:selection_data.selected_text, l:type)
-	if type(l:converted_data) == v:t_none
+	if type(l:converted_data) == type(v:null)
 		" No error message because it should've already been displayed earlier
 		return
 	endif
