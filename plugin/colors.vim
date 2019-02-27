@@ -3,7 +3,7 @@ let s:hex_regex = '#\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([
 let s:rgb_regex = 'rgba\=(\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\=)'
 let s:hsl_regex = 'hsla\=(\(\s*[0-9.]\+\%(deg\|rad\|turn\|grad\)\=[ ,]\+\)\([0-9]\+%[ ,]\+\)\([0-9]\+%[ ,/]*\)\([0-9.]\+%\= *\)\=)'
 let s:normalize_hex_digits = {idx, val -> str2nr('0x'.val, 16) / 255.0}
-let s:normalize_hex_shorthand_digits = {idx, val -> str2nr('0x'.idx.idx, 16) / 255.0}
+let s:normalize_hex_shorthand_digits = {idx, val -> str2nr('0x'.val.val, 16) / 255.0}
 let s:pi = 3.14159265359
 
 " Native viml min/max functions cannot accept floats...
