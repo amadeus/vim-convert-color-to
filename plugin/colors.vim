@@ -2,6 +2,7 @@ let s:hex_shorthand_regex = '#\([a-fA-F0-9]\)\([a-fA-F0-9]\)\([a-fA-F0-9]\)\([a-
 let s:hex_regex = '#\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\=\>'
 let s:rgb_regex = 'rgba\=(\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\=)'
 let s:hsl_regex = 'hsla\=(\(\s*[0-9.]\+\%(deg\|rad\|turn\|grad\)\=[ ,]\+\)\([0-9]\+%[ ,]\+\)\([0-9]\+%[ ,/]*\)\([0-9.]\+%\= *\)\=)'
+let s:detect_shorthand = '\<\([a-fA-F0-9]\)\1\([a-fA-F0-9]\)\2\([a-fA-F0-9]\)\3\%(\([a-fA-F0-9]\)\4\)\=\>'
 let s:normalize_hex_digits = {idx, val -> str2nr('0x'.val, 16) / 255.0}
 let s:normalize_hex_shorthand_digits = {idx, val -> str2nr('0x'.val.val, 16) / 255.0}
 let s:pi = 3.14159265359
@@ -207,7 +208,18 @@ function! s:FormatRGBAString(vals) abort
 endfunction
 
 function! s:FormatHEXString(vals) abort
-	return '#'.join(map(a:vals, {idx, val -> printf('%02x', float2nr(round(val * 255)))}), '')
+	let l:string = join(map(a:vals, {idx, val -> printf('%02x', float2nr(round(val * 255)))}), '')
+
+	" Attempt to convert to a shorthand hex
+	let l:shorthand = filter(
+		\ matchlist(l:string, s:detect_shorthand),
+		\ {idx, val -> idx == 0 || val == '' ? 0 : 1}
+	\ )
+	if len(l:shorthand) > 0
+		return '#'.join(l:shorthand, '')
+	endif
+
+	return '#'.l:string
 endfunction
 
 function! s:FormatHEXAString(vals) abort
