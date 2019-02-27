@@ -1,5 +1,7 @@
 This file is just here for testing, plis ignore
 
+#ff0
+#ff0a
 #fff000
 #fff000aa
 hsl(.75turn, 60%, 70%)

@@ -1,7 +1,9 @@
-let s:hex_regex = '#\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\='
+let s:hex_shorthand_regex = '#\([a-fA-F0-9]\)\([a-fA-F0-9]\)\([a-fA-F0-9]\)\([a-fA-F0-9]\)\=\>'
+let s:hex_regex = '#\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\=\>'
 let s:rgb_regex = 'rgba\=(\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\=)'
 let s:hsl_regex = 'hsla\=(\(\s*[0-9.]\+\%(deg\|rad\|turn\|grad\)\=[ ,]\+\)\([0-9]\+%[ ,]\+\)\([0-9]\+%[ ,/]*\)\([0-9.]\+%\= *\)\=)'
 let s:normalize_hex_digits = {idx, val -> str2nr('0x'.val, 16) / 255.0}
+let s:normalize_hex_shorthand_digits = {idx, val -> str2nr('0x'.idx.idx, 16) / 255.0}
 let s:pi = 3.14159265359
 
 " Native viml min/max functions cannot accept floats...
@@ -135,6 +137,13 @@ endfunction
 
 " Attempt to figure out string type and normalize the data from it
 function! s:NormalizeString(str) abort
+	" Is it a valid shorthand hex[a]?
+	let l:match = s:ParseString(a:str, s:hex_shorthand_regex, s:normalize_hex_shorthand_digits)
+	if type(l:match) == type({})
+		let l:match['type'] = 'hex'
+		return l:match
+	endif
+
 	" Is it a valid hex[a]?
 	let l:match = s:ParseString(a:str, s:hex_regex, s:normalize_hex_digits)
 	if type(l:match) == type({})
