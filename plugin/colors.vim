@@ -371,4 +371,9 @@ function! ConvertColorTo(...) range abort
 	echom 'Converted '.l:converted_data['match'].' -> '.l:converted_data['color_string']
 endfunction
 
-command! -nargs=* -range ConvertColorTo <line1>,<line2>call ConvertColorTo(<f-args>)
+command! -nargs=* -range -complete=custom,s:CompleteConvertColorTo
+      \ ConvertColorTo <line1>,<line2>call ConvertColorTo(<f-args>)
+
+function! s:CompleteConvertColorTo(arg_lead, cmd_line, cursor_pos)
+  return join(sort(keys(s:Formatters)), "\n")
+endfunction
