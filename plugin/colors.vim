@@ -1,5 +1,7 @@
 let s:hex_shorthand_regex = '#\([a-fA-F0-9]\)\([a-fA-F0-9]\)\([a-fA-F0-9]\)\([a-fA-F0-9]\)\=\>'
+let s:hex_num_shorthand_regex = '0x\([a-fA-F0-9]\)\([a-fA-F0-9]\)\([a-fA-F0-9]\)\([a-fA-F0-9]\)\=\>'
 let s:hex_regex = '#\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\=\>'
+let s:hex_num_regex = '0x\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\([a-fA-F0-9]\{2}\)\=\>'
 let s:rgb_regex = 'rgba\=(\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\(\s*[0-9.]\+[ ,]*\)\=)'
 let s:hsl_regex = 'hsla\=(\(\s*[0-9.]\+\%(deg\|rad\|turn\|grad\)\=[ ,]\+\)\([0-9]\+%[ ,]\+\)\([0-9]\+%[ ,/]*\)\([0-9.]\+%\= *\)\=)'
 let s:detect_shorthand = '\<\([a-fA-F0-9]\)\1\([a-fA-F0-9]\)\2\([a-fA-F0-9]\)\3\%(\([a-fA-F0-9]\)\4\)\=\>'
@@ -145,8 +147,22 @@ function! s:NormalizeString(str) abort
 		return l:match
 	endif
 
+	" Is it a valid shorthand hex_num[a]?
+	let l:match = s:ParseString(a:str, s:hex_num_shorthand_regex, s:normalize_hex_shorthand_digits)
+	if type(l:match) == type({})
+		let l:match['type'] = 'hex'
+		return l:match
+	endif
+
 	" Is it a valid hex[a]?
 	let l:match = s:ParseString(a:str, s:hex_regex, s:normalize_hex_digits)
+	if type(l:match) == type({})
+		let l:match['type'] = 'hex'
+		return l:match
+	endif
+
+	" Is it a valid hex_num[a]?
+	let l:match = s:ParseString(a:str, s:hex_num_regex, s:normalize_hex_digits)
 	if type(l:match) == type({})
 		let l:match['type'] = 'hex'
 		return l:match
@@ -222,6 +238,11 @@ function! s:FormatHEXString(vals) abort
 	return '#'.l:string
 endfunction
 
+function! s:FormatHEXNum(vals) abort
+	let l:string = join(map(a:vals, {idx, val -> printf('%02x', float2nr(round(val * 255)))}), '')
+	return '0x'.toupper(l:string)
+endfunction
+
 function! s:FormatHEXAString(vals) abort
 	let l:vals = a:vals
 	if len(l:vals) == 3
@@ -277,6 +298,7 @@ endfunction
 
 let s:Formatters = {
 	\ 'hex': function('s:FormatHEXString'),
+	\ 'hex_num': function('s:FormatHEXNum'),
 	\ 'hexa': function('s:FormatHEXAString'),
 	\ 'rgb': function('s:FormatDefaultRGBString'),
 	\ 'rgb_int': function('s:FormatRGBIntString'),
