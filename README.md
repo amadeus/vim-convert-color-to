@@ -35,7 +35,7 @@ Currently supported color formats are:
 * `rgb` -> `rgb(0, 100, 200)`
 * `rgb_int` -> `rgb(0, 100, 200)`
 * `rgb_float` -> `rgb(0.1, 0.2, 0.3)`
-* `rgba` -> `rgba(0, 100, 200)`
+* `rgba` -> `rgba(0, 100, 200, 0.3)`
 * `hsl` -> `hsl(200, 20%, 10%)`
 * `hsla` -> `hsla(100, 20%, 30%, 0.2)`
 
