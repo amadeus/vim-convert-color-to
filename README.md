@@ -32,6 +32,7 @@ Currently supported color formats are:
 
 * `hex` -> `#001122`
 * `hexa` -> `#00112233`
+* `hex_num` -> `0x001122`
 * `rgb` -> `rgb(0, 100, 200)`
 * `rgb_int` -> `rgb(0, 100, 200)`
 * `rgb_float` -> `rgb(0.1, 0.2, 0.3)`
